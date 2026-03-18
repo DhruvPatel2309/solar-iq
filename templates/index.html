@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SolarIQ — India's Solar Intelligence Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#F7F8FA;--white:#FFFFFF;--dark:#0F1117;--navy:#1A2340;
+  --text:#1C2235;--muted:#6B7280;--light:#E5E7EB;
+  --sun:#F59E0B;--sun2:#FCD34D;--orange:#EA580C;
+  --green:#059669;--blue:#2563EB;--red:#DC2626;
+  --shadow:0 1px 3px rgba(0,0,0,0.08),0 4px 16px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 6px rgba(0,0,0,0.07),0 10px 40px rgba(0,0,0,0.1);
+  --radius:12px;--radius-lg:20px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+a{text-decoration:none;color:inherit}
+/* NAV */
+nav{background:var(--white);border-bottom:1px solid var(--light);position:sticky;top:0;z-index:100;padding:0 2rem}
+.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.3rem;color:var(--dark);display:flex;align-items:center;gap:8px}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#F59E0B,#EA580C);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem}
+.nav-links{display:flex;gap:0.25rem;margin-left:1rem}
+.nav-links a{padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;color:var(--muted);transition:all 0.15s}
+.nav-links a:hover,.nav-links a.active{background:#FEF3C7;color:#92400E}
+.nav-cta{margin-left:auto;background:var(--dark);color:#fff;padding:8px 18px;border-radius:9px;font-size:0.875rem;font-weight:600;transition:all 0.15s}
+.nav-cta:hover{background:#2D3748}
+/* HERO */
+.hero{background:var(--white);border-bottom:1px solid var(--light)}
+.hero-inner{max-width:1200px;margin:0 auto;padding:5rem 2rem 4rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center}
+.hero-tag{display:inline-flex;align-items:center;gap:6px;background:#FEF3C7;color:#92400E;padding:5px 12px;border-radius:100px;font-size:0.8rem;font-weight:600;margin-bottom:1.25rem;border:1px solid #FDE68A}
+.hero h1{font-family:'Manrope',sans-serif;font-size:3rem;font-weight:800;line-height:1.15;color:var(--dark);margin-bottom:1.25rem;letter-spacing:-0.5px}
+.hero h1 em{font-style:normal;color:var(--sun);background:linear-gradient(135deg,#F59E0B,#EA580C);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{color:var(--muted);font-size:1.05rem;line-height:1.7;margin-bottom:2rem;max-width:460px}
+.hero-btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{background:linear-gradient(135deg,#F59E0B,#EA580C);color:#fff;padding:12px 24px;border-radius:10px;font-weight:600;font-size:0.95rem;transition:all 0.2s;border:none;cursor:pointer;font-family:inherit;display:inline-block}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 25px rgba(245,158,11,0.35)}
+.btn-outline{border:1.5px solid var(--light);color:var(--text);padding:11px 24px;border-radius:10px;font-weight:500;font-size:0.95rem;transition:all 0.2s;display:inline-block;background:var(--white)}
+.btn-outline:hover{border-color:var(--sun);color:var(--sun)}
+.hero-stats{display:flex;gap:2rem;margin-top:2.5rem;padding-top:2.5rem;border-top:1px solid var(--light)}
+.hero-stat-num{font-family:'Manrope',sans-serif;font-size:1.5rem;font-weight:800;color:var(--dark)}
+.hero-stat-label{font-size:0.78rem;color:var(--muted);margin-top:2px}
+/* Hero Visual */
+.hero-visual{position:relative}
+.hero-card-stack{position:relative;height:380px}
+.h-card{background:var(--white);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:1.5rem;position:absolute;border:1px solid var(--light)}
+.h-card-main{width:100%;top:0;left:0}
+.h-card-weather{width:200px;bottom:30px;right:-20px;z-index:2}
+.h-card-co2{width:190px;bottom:120px;left:-20px;z-index:2}
+.card-label{font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:0.75rem}
+.gauge-row{display:flex;align-items:center;gap:1rem;margin-bottom:1rem}
+.gauge-circle{width:64px;height:64px;border-radius:50%;background:conic-gradient(#F59E0B 0%,#F59E0B 72%,#E5E7EB 72%);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--dark);position:relative}
+.gauge-circle::before{content:'';position:absolute;width:48px;height:48px;border-radius:50%;background:var(--white)}
+.gauge-circle span{position:relative;z-index:1;font-size:0.7rem}
+.stat-pill{display:flex;align-items:center;gap:6px;font-size:0.82rem}
+.dot-green{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.dot-sun{width:7px;height:7px;border-radius:50%;background:var(--sun)}
+.mini-bars{display:flex;gap:4px;align-items:flex-end;margin-top:0.5rem;height:40px}
+.mini-bar{flex:1;border-radius:3px 3px 0 0;background:linear-gradient(to top,#F59E0B,#FCD34D);min-height:4px}
+/* FEATURES */
+.features{padding:5rem 2rem}
+.container{max-width:1200px;margin:0 auto}
+.section-header{text-align:center;margin-bottom:3rem}
+.section-tag{display:inline-block;background:#EFF6FF;color:#1D4ED8;padding:4px 12px;border-radius:100px;font-size:0.78rem;font-weight:600;margin-bottom:0.75rem}
+.section-header h2{font-family:'Manrope',sans-serif;font-size:2rem;font-weight:800;color:var(--dark);margin-bottom:0.75rem}
+.section-header p{color:var(--muted);max-width:480px;margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.feat-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius);padding:1.5rem;transition:all 0.2s;cursor:pointer;text-decoration:none;display:block;color:inherit}
+.feat-card:hover{border-color:#FCD34D;box-shadow:var(--shadow-md);transform:translateY(-2px)}
+.feat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.25rem;margin-bottom:1rem}
+.icon-sun{background:#FEF3C7}
+.icon-green{background:#D1FAE5}
+.icon-blue{background:#DBEAFE}
+.icon-purple{background:#EDE9FE}
+.icon-orange{background:#FEE2E2}
+.icon-teal{background:#CCFBF1}
+.feat-card h3{font-weight:700;font-size:0.95rem;margin-bottom:0.4rem;color:var(--dark)}
+.feat-card p{font-size:0.83rem;color:var(--muted);line-height:1.55}
+.feat-link{display:inline-flex;align-items:center;gap:4px;color:var(--sun);font-size:0.82rem;font-weight:600;margin-top:0.75rem}
+/* PREDICTOR */
+.predictor-section{background:var(--white);border-top:1px solid var(--light);border-bottom:1px solid var(--light);padding:5rem 2rem}
+.predictor-grid{display:grid;grid-template-columns:400px 1fr;gap:2.5rem;align-items:start}
+.form-box{background:var(--bg);border:1px solid var(--light);border-radius:var(--radius-lg);padding:2rem}
+.form-box h3{font-family:'Manrope',sans-serif;font-weight:700;font-size:1.1rem;margin-bottom:1.5rem;color:var(--dark)}
+.form-group{margin-bottom:1.1rem}
+.form-label{display:block;font-size:0.82rem;font-weight:600;color:var(--text);margin-bottom:5px}
+.form-input{width:100%;padding:9px 12px;background:var(--white);border:1.5px solid var(--light);border-radius:8px;font-family:inherit;font-size:0.88rem;color:var(--text);transition:border 0.15s;outline:none}
+.form-input:focus{border-color:var(--sun);box-shadow:0 0 0 3px rgba(245,158,11,0.1)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem}
+.submit-btn{width:100%;padding:11px;background:linear-gradient(135deg,#F59E0B,#EA580C);color:#fff;border:none;border-radius:9px;font-weight:700;font-family:inherit;font-size:0.95rem;cursor:pointer;transition:all 0.2s;margin-top:0.5rem}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,158,11,0.3)}
+.submit-btn:disabled{opacity:0.6;cursor:not-allowed;transform:none}
+.result-box{background:var(--bg);border:1px solid var(--light);border-radius:var(--radius-lg);padding:2rem;min-height:320px;display:flex;flex-direction:column;justify-content:center}
+.empty-state{text-align:center;color:var(--muted)}
+.empty-icon{font-size:2.5rem;margin-bottom:0.75rem}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.result-item{background:var(--white);border:1px solid var(--light);border-radius:10px;padding:1.1rem;text-align:center}
+.result-value{font-family:'Manrope',sans-serif;font-size:1.6rem;font-weight:800;color:var(--dark)}
+.result-label{font-size:0.72rem;color:var(--muted);margin-top:3px;font-weight:500}
+.result-full{grid-column:span 2}
+.accent-green{color:var(--green)}
+.accent-blue{color:var(--blue)}
+.accent-orange{color:var(--orange)}
+.result-header{display:flex;align-items:center;gap:8px;margin-bottom:1.25rem;padding-bottom:1rem;border-bottom:1px solid var(--light)}
+.result-loc{font-weight:700;font-size:1rem}
+.result-badge{margin-left:auto;background:#FEF3C7;color:#92400E;padding:3px 10px;border-radius:100px;font-size:0.72rem;font-weight:600}
+/* WEATHER */
+.weather-section{padding:5rem 2rem}
+.weather-search{display:flex;gap:10px;margin-bottom:2rem;max-width:500px}
+.weather-search input{flex:1;padding:10px 14px;border:1.5px solid var(--light);border-radius:9px;font-family:inherit;font-size:0.9rem;outline:none;background:var(--white)}
+.weather-search input:focus{border-color:var(--sun)}
+.weather-search button{background:linear-gradient(135deg,#F59E0B,#EA580C);color:#fff;border:none;padding:10px 20px;border-radius:9px;font-weight:600;cursor:pointer;font-family:inherit;white-space:nowrap}
+.weather-current{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center}
+.wc-big{font-family:'Manrope',sans-serif;font-size:2.5rem;font-weight:800;color:var(--dark)}
+.wc-label{font-size:0.78rem;color:var(--muted);margin-top:2px}
+.forecast-row{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+.forecast-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius);padding:1rem;text-align:center;transition:all 0.15s}
+.forecast-card:hover{border-color:#FCD34D;transform:translateY(-2px);box-shadow:var(--shadow)}
+.fc-date{font-size:0.7rem;color:var(--muted);font-weight:600;margin-bottom:4px}
+.fc-icon{font-size:1.4rem;margin:6px 0}
+.fc-temp{font-weight:700;font-size:0.88rem}
+.fc-cloud{font-size:0.7rem;color:var(--muted)}
+.fc-score{margin-top:6px;padding:2px 8px;border-radius:100px;font-size:0.68rem;font-weight:700;display:inline-block}
+.score-hi{background:#D1FAE5;color:#065F46}
+.score-md{background:#FEF3C7;color:#92400E}
+.score-lo{background:#FEE2E2;color:#991B1B}
+/* FOOTER */
+footer{background:var(--dark);color:#9CA3AF;padding:3rem 2rem;margin-top:2rem}
+.footer-inner{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem}
+.footer-logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.1rem;color:#fff}
+.footer-links{display:flex;gap:1.5rem}
+.footer-links a{font-size:0.85rem;color:#9CA3AF;transition:color 0.15s}
+.footer-links a:hover{color:#fff}
+/* LOADER */
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:768px){
+  .hero-inner,.predictor-grid{grid-template-columns:1fr}
+  .features-grid{grid-template-columns:1fr}
+  .forecast-row{grid-template-columns:repeat(3,1fr)}
+  .hero h1{font-size:2rem}
+  .nav-links{display:none}
+  .hero-card-stack{height:auto}
+  .h-card-weather,.h-card-co2{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><div class="logo-icon">☀</div> SolarIQ</a>
+    <div class="nav-links">
+      <a href="/" class="active">Home</a>
+      <a href="/tools">Tools</a>
+      <a href="/compare">Compare Panels</a>
+      <a href="/monitor">Live Monitor</a>
+      <a href="/chatbot">AI Chat</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+    <a href="/chatbot" class="nav-cta">Ask AI →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div>
+      <div class="hero-tag">🇮🇳 Built for India · ML-Powered · Free to Use</div>
+      <h1>Make Smarter Solar Decisions with <em>AI</em></h1>
+      <p>Predict solar energy output, calculate ROI, compare panel types, and get instant AI answers — all powered by machine learning models built for Indian solar conditions.</p>
+      <div class="hero-btns">
+        <a href="#predictor" class="btn-primary">⚡ Try Predictor</a>
+        <a href="/tools" class="btn-outline">Explore All Tools</a>
+      </div>
+      <div class="hero-stats">
+        <div><div class="hero-stat-num">6.2</div><div class="hero-stat-label">kWh/m²/day avg in India</div></div>
+        <div><div class="hero-stat-num">90GW+</div><div class="hero-stat-label">India solar capacity</div></div>
+        <div><div class="hero-stat-num">4–6yr</div><div class="hero-stat-label">Avg payback period</div></div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-card-stack">
+        <div class="h-card h-card-main">
+          <div class="card-label">Today's Solar Forecast — Ahmedabad</div>
+          <div class="gauge-row">
+            <div class="gauge-circle"><span>72%</span></div>
+            <div>
+              <div style="font-weight:700;font-size:1.1rem;margin-bottom:4px">High Output Day ☀️</div>
+              <div class="stat-pill"><span class="dot-green"></span><span style="color:#059669;font-weight:600">620 W/m² irradiance</span></div>
+              <div class="stat-pill" style="margin-top:4px"><span class="dot-sun"></span><span style="color:var(--muted)">Est. 28 kWh today</span></div>
+            </div>
+          </div>
+          <div style="font-size:0.78rem;color:var(--muted);margin-bottom:6px">7-day output forecast (kWh)</div>
+          <div class="mini-bars">
+            <div class="mini-bar" style="height:80%"></div>
+            <div class="mini-bar" style="height:65%"></div>
+            <div class="mini-bar" style="height:90%"></div>
+            <div class="mini-bar" style="height:100%"></div>
+            <div class="mini-bar" style="height:75%"></div>
+            <div class="mini-bar" style="height:55%"></div>
+            <div class="mini-bar" style="height:85%"></div>
+          </div>
+        </div>
+        <div class="h-card h-card-weather">
+          <div class="card-label">Weather</div>
+          <div style="font-size:1.5rem;font-weight:800;color:var(--dark)">34°C</div>
+          <div style="font-size:0.78rem;color:var(--muted)">Cloud cover: 18%</div>
+          <div style="margin-top:8px;font-size:0.8rem;color:var(--green);font-weight:600">✓ Excellent solar day</div>
+        </div>
+        <div class="h-card h-card-co2">
+          <div class="card-label">CO₂ Saved</div>
+          <div style="font-size:1.4rem;font-weight:800;color:var(--green)">1.2T</div>
+          <div style="font-size:0.75rem;color:var(--muted)">This year</div>
+          <div style="font-size:0.75rem;color:var(--muted);margin-top:4px">🌳 55 trees equiv.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">Platform Features</div>
+      <h2>Everything for Smart Solar Decisions</h2>
+      <p>8 powerful tools built with ML — from energy prediction to CO₂ tracking</p>
+    </div>
+    <div class="features-grid">
+      <a href="#predictor" class="feat-card">
+        <div class="feat-icon icon-sun">🔮</div>
+        <h3>ML Output Predictor</h3>
+        <p>RandomForest model predicts daily, monthly & yearly energy output based on your panel specs and location.</p>
+        <div class="feat-link">Try now →</div>
+      </a>
+      <a href="#weather" class="feat-card">
+        <div class="feat-icon icon-blue">🌤️</div>
+        <h3>7-Day Weather Forecast</h3>
+        <p>Live weather data from Open-Meteo with ML-estimated solar irradiance and solar score for each day.</p>
+        <div class="feat-link">Check forecast →</div>
+      </a>
+      <a href="/tools" class="feat-card">
+        <div class="feat-icon icon-green">💰</div>
+        <h3>ROI Calculator</h3>
+        <p>Calculate payback period, 25-year savings, EMI estimates and government subsidy deductions.</p>
+        <div class="feat-link">Calculate ROI →</div>
+      </a>
+      <a href="/compare" class="feat-card">
+        <div class="feat-icon icon-purple">📊</div>
+        <h3>Panel Comparison</h3>
+        <p>Compare Monocrystalline, Polycrystalline and Thin-Film panels side by side with ML scoring.</p>
+        <div class="feat-link">Compare panels →</div>
+      </a>
+      <a href="/tools" class="feat-card">
+        <div class="feat-icon icon-teal">🏠</div>
+        <h3>Solar Sizing Tool</h3>
+        <p>Enter your monthly electricity bill and get exact panel count, roof area, and cost estimate needed.</p>
+        <div class="feat-link">Size my system →</div>
+      </a>
+      <a href="/tools" class="feat-card">
+        <div class="feat-icon icon-green">🌱</div>
+        <h3>Carbon Footprint Tracker</h3>
+        <p>See your CO₂ savings in trees planted, cars removed, and flights offset with a 25-year projection.</p>
+        <div class="feat-link">Track carbon →</div>
+      </a>
+      <a href="/monitor" class="feat-card">
+        <div class="feat-icon icon-orange">⚡</div>
+        <h3>Live Energy Monitor</h3>
+        <p>Animated real-time power gauge simulating solar generation with hourly breakdown charts.</p>
+        <div class="feat-link">View monitor →</div>
+      </a>
+      <a href="/chatbot" class="feat-card">
+        <div class="feat-icon icon-blue">🤖</div>
+        <h3>AI Solar Chatbot</h3>
+        <p>Ask any question about solar energy, subsidies, installation, and costs in plain English.</p>
+        <div class="feat-link">Chat with AI →</div>
+      </a>
+      <a href="/dashboard" class="feat-card">
+        <div class="feat-icon icon-purple">📈</div>
+        <h3>Analytics Dashboard</h3>
+        <p>View all saved predictions, ROI calculations, and statistics stored in the SQLite database.</p>
+        <div class="feat-link">View dashboard →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- PREDICTOR -->
+<section class="predictor-section" id="predictor">
+  <div class="container">
+    <div class="section-header" style="text-align:left;margin-bottom:2rem">
+      <div class="section-tag">ML Model</div>
+      <h2>Solar Energy Output Predictor</h2>
+      <p style="color:var(--muted);margin:0">RandomForest regression model trained on Indian solar data</p>
+    </div>
+    <div class="predictor-grid">
+      <div class="form-box">
+        <h3>⚙️ Enter Panel Details</h3>
+        <div class="form-group">
+          <label class="form-label">City / Location</label>
+          <input class="form-input" id="p-loc" type="text" placeholder="e.g. Ahmedabad, Delhi, Mumbai" value="Ahmedabad">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Panel Area (m²)</label>
+            <input class="form-input" id="p-area" type="number" placeholder="20" value="20" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Efficiency (%)</label>
+            <input class="form-input" id="p-eff" type="number" placeholder="18" value="18" min="5" max="30">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Target Date</label>
+          <input class="form-input" id="p-date" type="date">
+        </div>
+        <button class="submit-btn" id="pred-btn" onclick="runPrediction()">🔮 Predict with ML</button>
+      </div>
+      <div class="result-box" id="pred-result">
+        <div class="empty-state">
+          <div class="empty-icon">☀️</div>
+          <p style="font-size:0.9rem">Fill in your panel details and click Predict to see ML results</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WEATHER -->
+<section class="weather-section" id="weather">
+  <div class="container">
+    <div class="section-header" style="text-align:left;margin-bottom:2rem">
+      <div class="section-tag">Live Data</div>
+      <h2>7-Day Solar Weather Forecast</h2>
+      <p style="color:var(--muted);margin:0">Real weather data + ML-estimated solar irradiance</p>
+    </div>
+    <div class="weather-search">
+      <input id="w-loc" type="text" placeholder="Enter city name..." value="Ahmedabad">
+      <button onclick="loadWeather()">Get Forecast</button>
+    </div>
+    <div id="weather-result">
+      <p style="color:var(--muted);text-align:center;padding:2rem 0">Click "Get Forecast" to load live weather data</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">☀ SolarIQ</div>
+      <div style="font-size:0.8rem;margin-top:4px">India's Solar Intelligence Platform</div>
+    </div>
+    <div class="footer-links">
+      <a href="/tools">Tools</a>
+      <a href="/compare">Compare</a>
+      <a href="/monitor">Monitor</a>
+      <a href="/chatbot">AI Chat</a>
+      <a href="/dashboard">Dashboard</a>
+    </div>
+    <div style="font-size:0.8rem">FastAPI · Scikit-learn · SQLite · Open-Meteo</div>
+  </div>
+</footer>
+
+<script>
+document.getElementById('p-date').value = new Date().toISOString().split('T')[0];
+
+async function runPrediction() {
+  const btn = document.getElementById('pred-btn');
+  const res = document.getElementById('pred-result');
+  const loc  = document.getElementById('p-loc').value;
+  const area = document.getElementById('p-area').value;
+  const eff  = document.getElementById('p-eff').value;
+  const date = document.getElementById('p-date').value;
+  if(!loc||!area||!eff||!date){alert('Please fill all fields!');return}
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Running ML Model...';
+  res.innerHTML='<div style="text-align:center;color:var(--muted);padding:2rem">Running RandomForest model...</div>';
+  const fd=new FormData();
+  fd.append('location',loc);fd.append('panel_area',area);fd.append('panel_efficiency',eff);fd.append('target_date',date);
+  try {
+    const r=await fetch('/api/predict',{method:'POST',body:fd});
+    const d=await r.json();
+    res.innerHTML=`
+    <div class="result-header">
+      <span style="font-size:1.2rem">📍</span>
+      <span class="result-loc">${d.location}</span>
+      <span class="result-badge">${d.model}</span>
+    </div>
+    <div class="result-grid">
+      <div class="result-item"><div class="result-value">${d.predicted_kwh}</div><div class="result-label">kWh / Day</div></div>
+      <div class="result-item"><div class="result-value">${d.monthly_kwh}</div><div class="result-label">kWh / Month</div></div>
+      <div class="result-item"><div class="result-value accent-green">${d.co2_saved_kg}</div><div class="result-label">kg CO₂ Saved/yr</div></div>
+      <div class="result-item"><div class="result-value accent-blue">₹${Number(d.money_saved_inr).toLocaleString()}</div><div class="result-label">Saved / Year</div></div>
+      <div class="result-item result-full"><div class="result-value">${d.yearly_kwh}</div><div class="result-label">kWh / Year · Irradiance: ${d.irradiance} kWh/m²/day · Season: ${d.season_factor}x</div></div>
+    </div>`;
+  } catch(e){res.innerHTML=`<div style="color:var(--red);text-align:center">❌ Error: ${e.message}</div>`}
+  btn.disabled=false; btn.innerHTML='🔮 Predict with ML';
+}
+
+async function loadWeather() {
+  const loc=document.getElementById('w-loc').value;
+  const el=document.getElementById('weather-result');
+  if(!loc){alert('Enter a city!');return}
+  el.innerHTML='<div style="text-align:center;color:var(--muted);padding:2rem">Fetching live weather data...</div>';
+  const fd=new FormData(); fd.append('location',loc);
+  try {
+    const r=await fetch('/api/weather',{method:'POST',body:fd});
+    const d=await r.json();
+    const icon=(c)=>c<20?'☀️':c<50?'⛅':c<80?'🌥️':'☁️';
+    const sc=(s)=>s>=7?'score-hi':s>=4?'score-md':'score-lo';
+    const cards=d.forecast.map(f=>`
+      <div class="forecast-card">
+        <div class="fc-date">${f.date.slice(5)}</div>
+        <div class="fc-icon">${icon(f.cloud_cover)}</div>
+        <div class="fc-temp">${Math.round(f.temp_max)}°C</div>
+        <div class="fc-cloud">☁ ${Math.round(f.cloud_cover)}%</div>
+        <div class="fc-score ${sc(f.solar_score)}">${f.solar_score}/10</div>
+      </div>`).join('');
+    el.innerHTML=`
+    <div class="weather-current">
+      <div><div class="wc-big">${d.temperature}°C</div><div class="wc-label">Current Temperature</div></div>
+      <div><div class="wc-big" style="color:var(--sun)">${d.solar_irradiance}</div><div class="wc-label">Solar Irradiance (W/m²)</div></div>
+      <div><div class="wc-big">${d.cloud_cover}%</div><div class="wc-label">Cloud Cover</div></div>
+      <div style="margin-left:auto;font-size:0.78rem;color:var(--muted)">Source: ${d.source}</div>
+    </div>
+    <div class="forecast-row">${cards}</div>`;
+  } catch(e){el.innerHTML=`<div style="color:var(--red);text-align:center">❌ ${e.message}</div>`}
+}
+</script>
+</body>
+</html>

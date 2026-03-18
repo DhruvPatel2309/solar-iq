@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SolarIQ — Compare Panels</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F8FA;--white:#fff;--dark:#0F1117;--text:#1C2235;--muted:#6B7280;--light:#E5E7EB;--sun:#F59E0B;--green:#059669;--blue:#2563EB;--orange:#EA580C;--radius:12px;--radius-lg:20px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{background:var(--white);border-bottom:1px solid var(--light);padding:0 2rem}
+.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.3rem;color:var(--dark);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#F59E0B,#EA580C);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:1rem}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all 0.15s}
+.nav-links a:hover,.nav-links a.active{background:#FEF3C7;color:#92400E}
+.page-header{background:var(--white);border-bottom:1px solid var(--light);padding:2.5rem 2rem}
+.page-header-inner{max-width:1200px;margin:0 auto}
+.breadcrumb{font-size:0.82rem;color:var(--muted);margin-bottom:0.5rem}
+.breadcrumb a{color:var(--muted);text-decoration:none}
+h1{font-family:'Manrope',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark)}
+.page-desc{color:var(--muted);font-size:0.95rem;margin-top:0.25rem}
+.main{max-width:1200px;margin:0 auto;padding:2.5rem 2rem}
+.search-bar{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem;display:flex;gap:1rem;align-items:flex-end;margin-bottom:2rem}
+.form-group{flex:1}
+.form-label{display:block;font-size:0.82rem;font-weight:600;margin-bottom:5px}
+.form-input{width:100%;padding:9px 12px;border:1.5px solid var(--light);border-radius:8px;font-family:inherit;font-size:0.88rem;outline:none;transition:border 0.15s;background:var(--white)}
+.form-input:focus{border-color:var(--sun)}
+.compare-btn{padding:10px 24px;background:linear-gradient(135deg,#F59E0B,#EA580C);color:#fff;border:none;border-radius:9px;font-weight:700;font-family:inherit;cursor:pointer;white-space:nowrap;transition:all 0.2s}
+.compare-btn:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(245,158,11,0.3)}
+.panels-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.25rem}
+.panel-card{background:var(--white);border:1.5px solid var(--light);border-radius:var(--radius-lg);padding:1.75rem;position:relative;transition:all 0.2s}
+.panel-card.recommended{border-color:#F59E0B;box-shadow:0 0 0 3px rgba(245,158,11,0.1)}
+.rec-badge{position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#F59E0B,#EA580C);color:#fff;padding:3px 14px;border-radius:100px;font-size:0.72rem;font-weight:700;white-space:nowrap}
+.panel-type{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.1rem;color:var(--dark);margin-bottom:0.25rem}
+.panel-sub{font-size:0.82rem;color:var(--muted);margin-bottom:1.25rem}
+.spec-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--light);font-size:0.85rem}
+.spec-row:last-child{border-bottom:none}
+.spec-label{color:var(--muted)}
+.spec-val{font-weight:600;color:var(--dark)}
+.spec-val.good{color:var(--green)}
+.spec-val.ok{color:var(--sun)}
+.spec-val.avg{color:var(--muted)}
+.score-bar{width:100%;height:6px;background:var(--light);border-radius:3px;margin-top:1.25rem;overflow:hidden}
+.score-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#F59E0B,#EA580C);transition:width 0.8s ease}
+.score-label{font-size:0.75rem;color:var(--muted);margin-top:4px;text-align:right}
+.empty-state{text-align:center;padding:3rem;color:var(--muted);background:var(--white);border-radius:var(--radius-lg);border:1px solid var(--light)}
+.spinner{display:inline-block;width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><div class="logo-icon">☀</div> SolarIQ</a>
+    <div class="nav-links">
+      <a href="/">Home</a><a href="/tools">Tools</a><a href="/compare" class="active">Compare</a>
+      <a href="/monitor">Monitor</a><a href="/chatbot">AI Chat</a><a href="/dashboard">Dashboard</a>
+    </div>
+  </div>
+</nav>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div class="breadcrumb"><a href="/">Home</a> → Compare Panels</div>
+    <h1>📊 Solar Panel Comparison</h1>
+    <p class="page-desc">Compare Monocrystalline, Polycrystalline & Thin-Film with ML-powered scoring</p>
+  </div>
+</div>
+<div class="main">
+  <div class="search-bar">
+    <div class="form-group"><label class="form-label">Location</label><input class="form-input" id="cmp-loc" value="Ahmedabad" placeholder="Enter city"></div>
+    <div class="form-group"><label class="form-label">Total Panel Area (m²)</label><input class="form-input" id="cmp-area" type="number" value="30" min="5"></div>
+    <button class="compare-btn" id="cmp-btn" onclick="doCompare()">⚡ Compare All Panels</button>
+  </div>
+  <div id="compare-result">
+    <div class="empty-state"><div style="font-size:2rem;margin-bottom:8px">📊</div><p>Enter your location and panel area, then click Compare to see ML-scored results</p></div>
+  </div>
+</div>
+<script>
+async function doCompare() {
+  const btn=document.getElementById('cmp-btn');
+  const res=document.getElementById('compare-result');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span> Analyzing...';
+  res.innerHTML='<div style="text-align:center;padding:2rem;color:var(--muted)">Running ML comparison...</div>';
+  const fd=new FormData();
+  fd.append('location',document.getElementById('cmp-loc').value);
+  fd.append('area',document.getElementById('cmp-area').value);
+  try {
+    const r=await fetch('/api/compare',{method:'POST',body:fd});
+    const d=await r.json();
+    const maxScore=Math.max(...d.panels.map(p=>p.score));
+    const cards=d.panels.map(p=>{
+      const pct=Math.round((p.score/maxScore)*100);
+      const eff=p.efficiency>=18?'good':p.efficiency>=14?'ok':'avg';
+      return `<div class="panel-card ${p.recommended?'recommended':''}">
+        ${p.recommended?'<div class="rec-badge">⭐ Best Value</div>':''}
+        <div class="panel-type">${p.type}</div>
+        <div class="panel-sub">${p.best_for}</div>
+        <div class="spec-row"><span class="spec-label">Efficiency</span><span class="spec-val ${eff}">${p.efficiency}%</span></div>
+        <div class="spec-row"><span class="spec-label">Daily Output</span><span class="spec-val good">${p.daily_kwh} kWh</span></div>
+        <div class="spec-row"><span class="spec-label">Yearly Output</span><span class="spec-val">${p.yearly_kwh} kWh</span></div>
+        <div class="spec-row"><span class="spec-label">System Size</span><span class="spec-val">${p.system_kw} kW</span></div>
+        <div class="spec-row"><span class="spec-label">Total Cost</span><span class="spec-val">₹${Number(p.total_cost).toLocaleString()}</span></div>
+        <div class="spec-row"><span class="spec-label">Annual Savings</span><span class="spec-val good">₹${Number(p.annual_savings).toLocaleString()}</span></div>
+        <div class="spec-row"><span class="spec-label">Payback Period</span><span class="spec-val ok">${p.payback_years} years</span></div>
+        <div class="spec-row"><span class="spec-label">Lifespan</span><span class="spec-val">${p.lifespan} years</span></div>
+        <div class="spec-row"><span class="spec-label">Warranty</span><span class="spec-val">${p.warranty}</span></div>
+        <div class="score-bar"><div class="score-fill" style="width:${pct}%"></div></div>
+        <div class="score-label">ML Score: ${p.score} / ${maxScore.toFixed(2)}</div>
+      </div>`;
+    }).join('');
+    res.innerHTML=`<div class="panels-grid">${cards}</div>`;
+  } catch(e){res.innerHTML=`<div style="color:red;text-align:center">❌ ${e.message}</div>`}
+  btn.disabled=false; btn.innerHTML='⚡ Compare All Panels';
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SolarIQ — Live Monitor</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F8FA;--white:#fff;--dark:#0F1117;--text:#1C2235;--muted:#6B7280;--light:#E5E7EB;--sun:#F59E0B;--green:#059669;--blue:#2563EB;--orange:#EA580C;--radius:12px;--radius-lg:20px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{background:var(--white);border-bottom:1px solid var(--light);padding:0 2rem}
+.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.3rem;color:var(--dark);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#F59E0B,#EA580C);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all 0.15s}
+.nav-links a:hover,.nav-links a.active{background:#FEF3C7;color:#92400E}
+.page-header{background:var(--white);border-bottom:1px solid var(--light);padding:2rem}
+.page-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+h1{font-family:'Manrope',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark)}
+.live-badge{display:flex;align-items:center;gap:6px;background:#D1FAE5;color:#065F46;padding:6px 14px;border-radius:100px;font-size:0.82rem;font-weight:600}
+.live-dot{width:8px;height:8px;border-radius:50%;background:#059669;animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.2)}}
+.main{max-width:1200px;margin:0 auto;padding:2rem}
+.monitor-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;margin-bottom:1.5rem}
+.stat-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem}
+.stat-label{font-size:0.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:0.5rem}
+.stat-value{font-family:'Manrope',sans-serif;font-size:2.2rem;font-weight:800;color:var(--dark)}
+.stat-sub{font-size:0.8rem;color:var(--muted);margin-top:3px}
+.stat-change{display:inline-flex;align-items:center;gap:3px;font-size:0.78rem;font-weight:600;padding:2px 8px;border-radius:100px;margin-top:6px}
+.change-up{background:#D1FAE5;color:#065F46}
+.change-neutral{background:#FEF3C7;color:#92400E}
+.gauge-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem;display:flex;flex-direction:column;align-items:center}
+.gauge-wrap{position:relative;width:200px;height:200px;margin:1rem auto}
+canvas#gauge{width:200px;height:200px}
+.gauge-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-40%);text-align:center}
+.gauge-val{font-family:'Manrope',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark)}
+.gauge-unit{font-size:0.78rem;color:var(--muted)}
+.chart-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem}
+.chart-title{font-weight:700;font-size:0.95rem;color:var(--dark);margin-bottom:1rem}
+.bar-chart{display:flex;gap:8px;align-items:flex-end;height:120px;padding-bottom:24px;position:relative}
+.bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;height:100%;justify-content:flex-end}
+.bar{width:100%;border-radius:4px 4px 0 0;background:linear-gradient(to top,#F59E0B,#FCD34D);min-height:2px;transition:height 0.5s ease}
+.bar-label{font-size:0.65rem;color:var(--muted);white-space:nowrap}
+.bar-val{font-size:0.65rem;font-weight:600;color:var(--text)}
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
+.info-list{list-style:none}
+.info-item{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--light);font-size:0.88rem}
+.info-item:last-child{border-bottom:none}
+.info-key{color:var(--muted)}
+.info-val{font-weight:600}
+.info-val.green{color:var(--green)}
+.info-val.sun{color:var(--sun)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><div class="logo-icon">☀</div> SolarIQ</a>
+    <div class="nav-links">
+      <a href="/">Home</a><a href="/tools">Tools</a><a href="/compare">Compare</a>
+      <a href="/monitor" class="active">Monitor</a><a href="/chatbot">AI Chat</a><a href="/dashboard">Dashboard</a>
+    </div>
+  </div>
+</nav>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div>
+      <h1>⚡ Live Energy Monitor</h1>
+      <p style="color:var(--muted);font-size:0.9rem;margin-top:3px">Simulated real-time solar generation dashboard</p>
+    </div>
+    <div class="live-badge"><div class="live-dot"></div> Live Simulation</div>
+  </div>
+</div>
+<div class="main">
+  <div class="monitor-grid">
+    <div class="stat-card">
+      <div class="stat-label">Current Output</div>
+      <div class="stat-value" id="current-power">0 W</div>
+      <div class="stat-sub">Instantaneous power</div>
+      <div class="stat-change change-up" id="power-trend">↑ Generating</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Energy Today</div>
+      <div class="stat-value" id="today-kwh">0.0 kWh</div>
+      <div class="stat-sub">Cumulative since sunrise</div>
+      <div class="stat-change change-neutral" id="today-val">₹0 saved</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">System Efficiency</div>
+      <div class="stat-value" id="efficiency">0%</div>
+      <div class="stat-sub">vs rated capacity</div>
+      <div class="stat-change change-up">5 kW System</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:1.25rem;margin-bottom:1.25rem">
+    <div class="gauge-card">
+      <div style="font-weight:700;font-size:0.95rem;color:var(--dark);margin-bottom:0.5rem">Power Gauge</div>
+      <div class="gauge-wrap">
+        <canvas id="gauge" width="200" height="200"></canvas>
+        <div class="gauge-center">
+          <div class="gauge-val" id="gauge-val">0</div>
+          <div class="gauge-unit">Watts</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:0.78rem;color:var(--muted)">Max: 5000W</div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📊 Hourly Generation Today (kWh)</div>
+      <div class="bar-chart" id="hourly-chart"></div>
+    </div>
+  </div>
+
+  <div class="bottom-grid">
+    <div class="chart-card">
+      <div class="chart-title">📋 System Status</div>
+      <ul class="info-list">
+        <li class="info-item"><span class="info-key">Inverter Status</span><span class="info-val green">● Online</span></li>
+        <li class="info-item"><span class="info-key">Grid Connection</span><span class="info-val green">● Connected</span></li>
+        <li class="info-item"><span class="info-key">Panel Temperature</span><span class="info-val sun" id="panel-temp">42°C</span></li>
+        <li class="info-item"><span class="info-key">Irradiance</span><span class="info-val" id="irr-val">600 W/m²</span></li>
+        <li class="info-item"><span class="info-key">Today's Peak</span><span class="info-val" id="peak-val">0 W</span></li>
+        <li class="info-item"><span class="info-key">CO₂ Offset Today</span><span class="info-val green" id="co2-val">0 kg</span></li>
+      </ul>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">💰 Financial Summary</div>
+      <ul class="info-list">
+        <li class="info-item"><span class="info-key">Today's Savings</span><span class="info-val green" id="fin-today">₹0</span></li>
+        <li class="info-item"><span class="info-key">This Month (est.)</span><span class="info-val" id="fin-month">₹0</span></li>
+        <li class="info-item"><span class="info-key">This Year (est.)</span><span class="info-val" id="fin-year">₹0</span></li>
+        <li class="info-item"><span class="info-key">Units Exported</span><span class="info-val" id="exported">0 kWh</span></li>
+        <li class="info-item"><span class="info-key">Export Earnings</span><span class="info-val green" id="export-earn">₹0</span></li>
+        <li class="info-item"><span class="info-key">Rate (₹/unit)</span><span class="info-val">₹8.00</span></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<script>
+const MAX_W = 5000;
+const RATE  = 8;
+let totalKwh = 0;
+let peakW    = 0;
+let hourlyData = Array(24).fill(0);
+const now = new Date();
+const curHour = now.getHours();
+
+// Pre-fill past hours with a solar curve
+for(let h=6; h<curHour; h++) {
+  const factor = Math.sin(Math.PI*(h-6)/14)*0.9 + Math.random()*0.1;
+  hourlyData[h] = h>=6 && h<=19 ? Math.max(0, parseFloat((MAX_W*factor*0.9/1000).toFixed(2))) : 0;
+  totalKwh += hourlyData[h];
+}
+
+function drawGauge(watts) {
+  const canvas = document.getElementById('gauge');
+  const ctx    = canvas.getContext('2d');
+  const cx=100, cy=100, r=80;
+  ctx.clearRect(0,0,200,200);
+  const startA = Math.PI*0.75;
+  const endA   = Math.PI*2.25;
+  ctx.beginPath(); ctx.arc(cx,cy,r,startA,endA);
+  ctx.strokeStyle='#E5E7EB'; ctx.lineWidth=14; ctx.lineCap='round'; ctx.stroke();
+  const pct = Math.min(watts/MAX_W, 1);
+  const fillA = startA + pct*(endA-startA);
+  if(pct>0) {
+    const grad=ctx.createLinearGradient(cx-r,cy,cx+r,cy);
+    grad.addColorStop(0,'#FCD34D'); grad.addColorStop(1,'#EA580C');
+    ctx.beginPath(); ctx.arc(cx,cy,r,startA,fillA);
+    ctx.strokeStyle=grad; ctx.lineWidth=14; ctx.lineCap='round'; ctx.stroke();
+  }
+}
+
+function drawBarChart() {
+  const el = document.getElementById('hourly-chart');
+  const maxVal = Math.max(...hourlyData, 0.1);
+  const hours  = Array.from({length:24},(_,i)=>i);
+  el.innerHTML = hours.filter(h=>h>=5&&h<=20).map(h=>{
+    const val   = hourlyData[h];
+    const pct   = (val/maxVal)*100;
+    const active= h===curHour ? 'background:linear-gradient(to top,#EA580C,#F59E0B)' : '';
+    return `<div class="bar-wrap">
+      <div class="bar-val">${val>0?val.toFixed(1):''}</div>
+      <div class="bar" style="height:${pct}%;${active}"></div>
+      <div class="bar-label">${h}h</div>
+    </div>`;
+  }).join('');
+}
+
+function getSolarFactor(h) {
+  if(h<6||h>19) return 0;
+  return Math.max(0, Math.sin(Math.PI*(h-6)/13)*0.95 + (Math.random()-0.5)*0.08);
+}
+
+function update() {
+  const h = new Date().getHours();
+  const factor = getSolarFactor(h);
+  const watts  = Math.round(MAX_W * factor);
+  const addKwh = parseFloat((watts / 1000 / 60).toFixed(4));
+  totalKwh    += addKwh;
+  hourlyData[h] = parseFloat((hourlyData[h]+addKwh).toFixed(3));
+  if(watts > peakW) peakW = watts;
+
+  document.getElementById('current-power').textContent = watts.toLocaleString()+' W';
+  document.getElementById('today-kwh').textContent     = totalKwh.toFixed(2)+' kWh';
+  document.getElementById('efficiency').textContent    = Math.round(factor*100)+'%';
+  document.getElementById('gauge-val').textContent     = watts.toLocaleString();
+  document.getElementById('today-val').textContent     = '₹'+Math.round(totalKwh*RATE)+' saved';
+  document.getElementById('panel-temp').textContent    = (35+Math.round(factor*15))+'°C';
+  document.getElementById('irr-val').textContent       = Math.round(factor*950)+' W/m²';
+  document.getElementById('peak-val').textContent      = peakW.toLocaleString()+' W';
+  document.getElementById('co2-val').textContent       = (totalKwh*0.82).toFixed(2)+' kg';
+  document.getElementById('fin-today').textContent     = '₹'+Math.round(totalKwh*RATE);
+  document.getElementById('fin-month').textContent     = '₹'+Math.round(totalKwh*30*RATE);
+  document.getElementById('fin-year').textContent      = '₹'+Math.round(totalKwh*365*RATE);
+  const exported=Math.max(0,totalKwh-2.5);
+  document.getElementById('exported').textContent      = exported.toFixed(2)+' kWh';
+  document.getElementById('export-earn').textContent   = '₹'+Math.round(exported*3.5);
+
+  drawGauge(watts);
+  drawBarChart();
+}
+
+drawGauge(0); drawBarChart();
+update();
+setInterval(update, 2000);
+</script>
+</body>
+</html>

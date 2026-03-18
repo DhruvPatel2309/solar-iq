@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SolarIQ — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#F7F8FA;--white:#fff;--dark:#0F1117;--text:#1C2235;--muted:#6B7280;--light:#E5E7EB;--sun:#F59E0B;--green:#059669;--blue:#2563EB;--orange:#EA580C;--radius:12px;--radius-lg:20px}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text)}
+nav{background:var(--white);border-bottom:1px solid var(--light);padding:0 2rem}
+.nav-inner{max-width:1200px;margin:0 auto;height:64px;display:flex;align-items:center;gap:2rem}
+.logo{font-family:'Manrope',sans-serif;font-weight:800;font-size:1.3rem;color:var(--dark);display:flex;align-items:center;gap:8px;text-decoration:none}
+.logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#F59E0B,#EA580C);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff}
+.nav-links{display:flex;gap:4px}
+.nav-links a{padding:6px 14px;border-radius:8px;font-size:0.875rem;font-weight:500;color:var(--muted);text-decoration:none;transition:all 0.15s}
+.nav-links a:hover,.nav-links a.active{background:#FEF3C7;color:#92400E}
+.page-header{background:var(--white);border-bottom:1px solid var(--light);padding:2rem}
+.page-header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between}
+h1{font-family:'Manrope',sans-serif;font-size:1.8rem;font-weight:800;color:var(--dark)}
+.main{max-width:1200px;margin:0 auto;padding:2rem}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem}
+.stat-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.25rem}
+.stat-label{font-size:0.75rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:0.5rem}
+.stat-num{font-family:'Manrope',sans-serif;font-size:2rem;font-weight:800;color:var(--dark)}
+.stat-sub{font-size:0.78rem;color:var(--muted);margin-top:2px}
+.section-title{font-family:'Manrope',sans-serif;font-size:1rem;font-weight:700;color:var(--dark);margin-bottom:1rem}
+.table-card{background:var(--white);border:1px solid var(--light);border-radius:var(--radius-lg);padding:1.5rem;margin-bottom:1.5rem;overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:0.84rem}
+th{text-align:left;padding:8px 12px;color:var(--muted);font-weight:600;font-size:0.78rem;border-bottom:1px solid var(--light);text-transform:uppercase;letter-spacing:0.4px}
+td{padding:10px 12px;border-bottom:1px solid #F9FAFB}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#FAFAFA}
+.badge{padding:3px 9px;border-radius:100px;font-size:0.72rem;font-weight:600}
+.badge-sun{background:#FEF3C7;color:#92400E}
+.badge-green{background:#D1FAE5;color:#065F46}
+.badge-blue{background:#DBEAFE;color:#1D4ED8}
+.empty-state{text-align:center;padding:3rem;color:var(--muted)}
+.refresh-btn{background:var(--white);border:1px solid var(--light);color:var(--text);padding:8px 16px;border-radius:8px;font-family:inherit;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.15s}
+.refresh-btn:hover{border-color:var(--sun);color:var(--sun)}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="logo"><div class="logo-icon">☀</div> SolarIQ</a>
+    <div class="nav-links">
+      <a href="/">Home</a><a href="/tools">Tools</a><a href="/compare">Compare</a>
+      <a href="/monitor">Monitor</a><a href="/chatbot">AI Chat</a><a href="/dashboard" class="active">Dashboard</a>
+    </div>
+  </div>
+</nav>
+<div class="page-header">
+  <div class="page-header-inner">
+    <div><h1>📈 Analytics Dashboard</h1><p style="color:var(--muted);font-size:0.9rem;margin-top:3px">All data stored in SQLite database</p></div>
+    <button class="refresh-btn" onclick="location.reload()">↻ Refresh</button>
+  </div>
+</div>
+<div class="main">
+  <div class="stats-grid" id="stats-grid">
+    <div class="stat-card"><div class="stat-label">Predictions Made</div><div class="stat-num" id="s-pred">—</div><div class="stat-sub">ML predictions run</div></div>
+    <div class="stat-card"><div class="stat-label">ROI Calculations</div><div class="stat-num" id="s-roi">—</div><div class="stat-sub">Financial analyses</div></div>
+    <div class="stat-card"><div class="stat-label">Chat Messages</div><div class="stat-num" id="s-chat">—</div><div class="stat-sub">AI conversations</div></div>
+    <div class="stat-card"><div class="stat-label">CO₂ Tracked</div><div class="stat-num" id="s-co2" style="color:var(--green)">—</div><div class="stat-sub">kg saved total</div></div>
+  </div>
+
+  {% if predictions %}
+  <div class="table-card">
+    <div class="section-title">⚡ Recent ML Predictions</div>
+    <table>
+      <thead><tr><th>#</th><th>Location</th><th>Area</th><th>Efficiency</th><th>Daily Output</th><th>CO₂/yr</th><th>Date</th></tr></thead>
+      <tbody>
+        {% for p in predictions %}
+        <tr>
+          <td style="color:var(--muted)">{{p.id}}</td>
+          <td><strong>{{p.location}}</strong></td>
+          <td>{{p.panel_area}} m²</td>
+          <td>{{p.panel_efficiency}}%</td>
+          <td><span class="badge badge-sun">{{p.predicted_kwh}} kWh</span></td>
+          <td><span class="badge badge-green">{{p.co2_saved_kg if p.co2_saved_kg else '—'}} kg</span></td>
+          <td style="color:var(--muted)">{{p.predicted_date}}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="table-card"><div class="empty-state"><div style="font-size:2rem;margin-bottom:8px">☀️</div><p>No predictions yet. <a href="/" style="color:var(--sun)">Make your first prediction!</a></p></div></div>
+  {% endif %}
+
+  {% if roi_records %}
+  <div class="table-card">
+    <div class="section-title">💰 ROI Calculations</div>
+    <table>
+      <thead><tr><th>#</th><th>Location</th><th>System Size</th><th>Total Cost</th><th>Annual Savings</th><th>Payback</th><th>25yr ROI</th></tr></thead>
+      <tbody>
+        {% for r in roi_records %}
+        <tr>
+          <td style="color:var(--muted)">{{r.id}}</td>
+          <td><strong>{{r.location}}</strong></td>
+          <td>{{r.system_size_kw}} kW</td>
+          <td>₹{{"{:,.0f}".format(r.total_cost)}}</td>
+          <td><span class="badge badge-green">₹{{"{:,.0f}".format(r.annual_savings)}}</span></td>
+          <td><span class="badge badge-sun">{{r.payback_years}} yrs</span></td>
+          <td><span class="badge badge-blue">₹{{"{:,.0f}".format(r.roi_25yr)}}</span></td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+</div>
+<script>
+fetch('/api/stats').then(r=>r.json()).then(d=>{
+  document.getElementById('s-pred').textContent=d.predictions;
+  document.getElementById('s-roi').textContent=d.roi_calculations;
+  document.getElementById('s-chat').textContent=d.chat_messages;
+  document.getElementById('s-co2').textContent=d.total_co2_saved+' kg';
+});
+</script>
+</body>
+</html>
